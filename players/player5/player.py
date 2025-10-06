@@ -169,35 +169,35 @@ class Player5(Player):  # Define a new player strategy subclass of Player
             # Apply the cut to update the internal cake state
 
         return moves
-        # Return list of all cuts made
+         #Return list of all cuts made
 
-    # def optimal_piece(self) -> tuple[Point, Point]:
-    # largest_remaining_piece = max(self.cake.get_pieces(), key = lambda p:p.area)
-    # vertices = list(largest_piece.exteriror.coords[:-1])
-    # line = [
-    # StringLine([vertices[i], vertices[i + 1] %len(vertices)]])
-    # for i in range(len(vertices))
-    # ]
-    # optimal_cut = None
-    # smallest_area_difference = float("inf")
-    # for i in range(len(lines)):
-    # for j in range(i + 1, len(lines)):
-    # from_p = lines[i].centroid
-    # to_p = lines[j].centroid
-    # is_valid, _ = self.cake.cut_is_valid(from_p, to_p)
-    # if not is_valid:
-    # continue
-    # copy_cake = self.cake.copy()
-    # try:
-    # cpy_cake.cut(from_p, to_p)
-    # pieces = cpy_cake.get_pieces()
-    # if len(pieces) < 2:
-    # continue
-    # two_compared_areas = [p.area for p in pieces]
-    # difference_between_two_compared_areas = abs(two_compared_areas[0] - two_compared_areas[1]
+    def optimal_piece(self) -> tuple[Point, Point]:
+        largest_remaining_piece = max(self.cake.get_pieces(), key = lambda p:p.area)
+        vertices = list(largest_piece.exteriror.coords[:-1])
+        line = [
+        StringLine([vertices[i], vertices[i + 1] %len(vertices)]])
+        for i in range(len(vertices))
+        ]
+        optimal_cut = None
+        smallest_area_difference = float("inf")
+        for i in range(len(lines)):
+        for j in range(i + 1, len(lines)):
+        from_p = lines[i].centroid
+        to_p = lines[j].centroid
+        is_valid, _ = self.cake.cut_is_valid(from_p, to_p)
+        if not is_valid:
+            continue
+        copy_cake = self.cake.copy()
+        try:
+            cpy_cake.cut(from_p, to_p)
+            pieces = cpy_cake.get_pieces()
+        if len(pieces) < 2:
+            continue
+        two_compared_areas = [p.area for p in pieces]
+        difference_between_two_compared_areas = abs(two_compared_areas[0] - two_compared_areas[1]
 
-    # if difference_between_two_compared_areas < smallest_area_diff:
-    # smallest_area_diff = difference_between_two_compared_areas
-    # optimal_cut = (from_p, to_p)
-    # if optimal_cut:
-    # return optimal_cut
+        if difference_between_two_compared_areas < smallest_area_diff:
+            smallest_area_diff = difference_between_two_compared_areas
+        optimal_cut = (from_p, to_p)
+        if optimal_cut:
+            return optimal_cut
