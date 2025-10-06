@@ -175,7 +175,7 @@ class Player5(Player):  # Define a new player strategy subclass of Player
         largest_remaining_piece = max(self.cake.get_pieces(), key = lambda p:p.area)
         vertices = list(largest_piece.exteriror.coords[:-1])
         line = [
-        StringLine([vertices[i], vertices[i + 1] %len(vertices)]])
+        StringLine([vertices[i], vertices[i + 1] %len(vertices)])
         for i in range(len(vertices))
         ]
         optimal_cut = None
