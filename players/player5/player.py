@@ -9,7 +9,21 @@ class Player5(Player):  # Define a new player strategy subclass of Player
             children, cake, cake_path
         )  # Initialize parent Player with given parameters
         print(f"I am {self}")  # Print player identity for debugging
+        
+    def obtain_all_edges(polygon):
+            edges = []
+            exterior_coords = list(polygon.exterior.coords)
+            edges.extend(
+                [LineString([ext_coords[i], [ext_coords[i + 1]]) for i in range(len(ext_coords) - 1)]
+            )
 
+            for interior in polygon.interiors:
+                int_coords = list(inerior.coords)
+                edges.extend(
+                    [LineString([int_coords[i], [int_coords[i + 1]]) for i in range(len(int_coords) - 1)]
+                )
+            return edges
+        
     def find_random_cut(self) -> tuple[Point, Point]:
         """Find a random cut.
 
@@ -22,6 +36,11 @@ class Player5(Player):  # Define a new player strategy subclass of Player
         largest_piece = max(self.cake.get_pieces(), key=lambda piece: piece.area)
         # Get all current cake pieces and select the one with the largest area
 
+        
+
+        lines = self.obtain_all_edges(largest_piece)
+
+        
         vertices = list(largest_piece.exterior.coords[:-1])
         # Extract the vertices (outer boundary coordinates) of that polygon, excluding duplicate last point
 
@@ -49,12 +68,14 @@ class Player5(Player):  # Define a new player strategy subclass of Player
             return from_p, to_p
         # If valid, return the cut
 
-        lines = [
-            LineString([vertices[i], vertices[(i + 1) % len(vertices)]])
-            for i in range(len(vertices))
-        ]
+        #lines = [
+        #    LineString([vertices[i], vertices[(i + 1) % len(vertices)]])
+        #    for i in range(len(vertices))
+        #]
         # Otherwise, build all edges again, ensuring wrap-around to close polygon
-
+        
+        lines = self.obtain_all_edges(largest_piece)
+        
         for i in range(len(lines)):
             for j in range(i + 1, len(lines)):
                 from_p = lines[i].centroid
@@ -97,10 +118,12 @@ class Player5(Player):  # Define a new player strategy subclass of Player
         print(highest_x, highest_y)
         print(step_size)
 
-        lines = [
-            LineString([vertices[i], vertices[(i + 1) % len(vertices)]])
-            for i in range(len(vertices))
-        ]
+        #lines = [
+        #    LineString([vertices[i], vertices[(i + 1) % len(vertices)]])
+        #    for i in range(len(vertices))
+        #]
+        lines = self.obtain_all_edges(self.cake.get_pieces()[0])
+        
         tracked_area = 0.0
         while current_y < highest_y:
             current_y += step_size
@@ -113,13 +136,21 @@ class Player5(Player):  # Define a new player strategy subclass of Player
                 inter = cut.intersection(edge)
                 if not inter.is_empty:
                     intersections.append(inter)
-            if len(intersections) != 2:
-                return [], False
+            intersections = sorted(intersections, key = lambda p: p.x)
+            if len(intersections) < 2:
+                continue
             from_p = intersections[0]
-            to_p = intersections[1]
+            to_p = intersections[-1]
             cpy_cake = self.cake.copy()
             try:
                 cpy_cake.cut(from_p, to_p)
+                new_pieces = []
+                for p in cpy_cake.get_pieces():
+                    if p.geom_type == "MultiPolygon":
+                        new_pieces.extend(list(p.geoms))
+                    else:
+                        new_pieces.append(p)
+                cpy_cake._pieces = new_pieces
                 smallest_piece = min(
                     cpy_cake.get_pieces(), key=lambda piece: piece.area
                 )
@@ -190,6 +221,13 @@ class Player5(Player):  # Define a new player strategy subclass of Player
         copy_cake = self.cake.copy()
         try:
             cpy_cake.cut(from_p, to_p)
+            new_pieces = []
+                for p in cpy_cake.get_pieces():
+                    if p.geom_type == "MultiPolygon":
+                        new_pieces.extend(list(p.geoms))
+                    else:
+                        new_pieces.append(p)
+                cpy_cake._pieces = new_pieces
             pieces = cpy_cake.get_pieces()
         if len(pieces) < 2:
             continue
