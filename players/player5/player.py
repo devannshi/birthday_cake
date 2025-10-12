@@ -1,6 +1,9 @@
 from shapely import LineString, Point
 from players.player import Player, PlayerException
 from src.cake import Cake
+import src.constants as c
+import math
+from typing import List, Tuple, Optional
 
 
 class Player5(Player):  # Define a new player strategy subclass of Player
